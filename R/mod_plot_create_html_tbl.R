@@ -38,7 +38,7 @@ glue::glue("
   </div>")
   } else {
   current_year <-  colnames(df)[3]
-  tbl <- df %>%
+  tbl <- df |>
     dplyr::transmute(
       Metric  = .data$name,
       current = .[[colnames(df)[3]]],
