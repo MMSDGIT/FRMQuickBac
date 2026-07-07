@@ -56,7 +56,7 @@ mke_rivers_sf_filt <- reactive({
     
 ws_lookup_sf_filt <- reactive({
   ws_in_dat <- unique(dat_filt()$WeatherStation) 
-  ws_lookup_sf <- readRDS("data/ws_lookup_sf")
+  ws_lookup_sf <- readRDS("data/ws_lookup_sf.rds")
   if (is.null(ws_in_dat)) return(ws_lookup_sf[0, , drop = FALSE])
   ws_lookup_sf[ws_lookup_sf$WeatherStation %in% ws_in_dat, , drop = FALSE]
 }) 
