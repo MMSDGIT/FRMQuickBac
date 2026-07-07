@@ -37,7 +37,8 @@ mod_leaflet_map_server <- function(id, dat_filt, map_inputs, map_selection) {
 
     mke_basin_sf_filt <- reactive({
       watershed <- unique(dat_filt()$Watershed) 
-      bas  <- mke_basin_sf
+      
+      bas  <- readRDS("data/mke_basin_sf.rds")
       if (is.null(watershed) || !("HUC10_NAME" %in% names(bas))) {
         return(bas[0, , drop = FALSE])
       }
@@ -48,14 +49,14 @@ mod_leaflet_map_server <- function(id, dat_filt, map_inputs, map_selection) {
 
 mke_rivers_sf_filt <- reactive({
   watershed <- unique(dat_filt()$Watershed) 
-  riv <- mke_rivers_sf
+  riv <- readRDS("data/mke_rivers_sf.rds")
   if (is.null(watershed)) return(riv[0, , drop = FALSE])
   riv[riv$HUC10_NAME %in% watershed, , drop = FALSE]
 }) 
     
 ws_lookup_sf_filt <- reactive({
   ws_in_dat <- unique(dat_filt()$WeatherStation) 
-  ws_lookup_sf <- ws_lookup_sf
+  ws_lookup_sf <- readRDS("data/ws_lookup_sf")
   if (is.null(ws_in_dat)) return(ws_lookup_sf[0, , drop = FALSE])
   ws_lookup_sf[ws_lookup_sf$WeatherStation %in% ws_in_dat, , drop = FALSE]
 }) 

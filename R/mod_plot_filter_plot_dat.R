@@ -77,7 +77,7 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
             SiteCode = site
           ) |>
           dplyr::left_join(
-        ws_lookup |> dplyr::select(station_id = WeatherStation, Latitude = Lat, Longitude =  Long, SiteDescription = Description)
+        readRDS("data/ws_lookup.rds") |> dplyr::select(station_id = WeatherStation, Latitude = Lat, Longitude =  Long, SiteDescription = Description)
           )
         dplyr::bind_rows(base_df, hist_df, precip_dat_filt)
     })
