@@ -26,6 +26,7 @@ mod_filter_map_dat_server <- function(id, map_inputs){
     observe({
       vals <- map_inputs()
       req(vals$survey_date, vals$parameter, vals$watershed)
+      max_values <- readRDS("data/max_values.rds")
       max_val <- max_values |>
         dplyr::filter(
           Date == vals$survey_date,

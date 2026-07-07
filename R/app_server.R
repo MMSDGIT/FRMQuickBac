@@ -5,7 +5,7 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  max_values <- readRDS("data/max_values.rds")
+  #max_values <- readRDS("data/max_values.rds")
   mke_basin_sf <- readRDS("data/mke_basin_sf.rds")
   mke_rivers_sf <- readRDS("data/mke_rivers_sf.rds")
   ws_lookup_sf <- readRDS("data/ws_lookup_sf.rds")
