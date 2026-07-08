@@ -37,13 +37,13 @@ glue::glue("
     No data available for this selection
   </div>")
   } else {
-  current_year <-  colnames(df)[3]
-  tbl <- df |>
-    dplyr::transmute(
-      Metric  = .data$name,
-      current = .[[colnames(df)[3]]],
-      other   = .[["Other"]]
-    )
+current_year <- colnames(df)[3]
+
+tbl <- tibble::tibble(
+  Metric  = df$name,
+  current = df[[current_year]],
+  other   = df[["Other"]]
+)
 
 fmt_num <- function(x) {
   ifelse(
