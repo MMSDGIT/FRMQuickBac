@@ -71,15 +71,15 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
             station_id %in% station_val) |>
           dplyr::collect() |> 
           dplyr::mutate(
-            LabelName = paste("Daily Precipitation:", station_val),
-            type = paste("Precip"),
+            LabelName = paste("Total Daily Precipitation:"),
+            type = paste("Total Daily Precipitaion"),
             Units = "Inches",
             SiteCode = site
           ) |>
           dplyr::left_join(
         readRDS("data/ws_lookup.rds") |> dplyr::select(station_id = WeatherStation, Latitude = Lat, Longitude =  Long, SiteDescription = Description)
           )
-        dplyr::bind_rows(base_df, hist_df, precip_dat_filt)
+        dplyr::bind_rows(base_df, hist_df, precip_dat_filt) 
     })
     )
   })

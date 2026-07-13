@@ -36,13 +36,14 @@ function round2(x) {
   const v = +x;
   return isFinite(v) ? (Math.round(v * 100) / 100).toFixed(2) : "";
 }
+
 function tooltipHTML(d) {
   const color = d.Color || "#064789";
   const type = escHtml(d.type);
   const site = escHtml(d.SiteCode || d.Site || "");
   const date = d.Date instanceof Date ? fmtDate(d.Date) : escHtml(d.Date);
-  //const res = round2(d.ReadingNum);
   const unit = escHtml(d.Units || "");
+  const isPrecip = /precip/i.test(String(d.type || ""));
 
   function formatNumber(x) {
     const v = +x;
@@ -67,9 +68,12 @@ function tooltipHTML(d) {
   <div style="font-weight:bold; font-size:18px; color:${color}; margin-bottom:6px;">
     ${type}
   </div>
-  <div style="font-size:16px; color:black; margin-bottom:3px;">
-    ${site}
-  </div>
+
+  ${isPrecip ? "" : `
+    <div style="font-size:16px; color:black; margin-bottom:3px;">
+      ${site}
+    </div>
+  `}
 
   <hr style="border:none; border-top:1px solid ${color}; margin:10px 0;">
 
@@ -280,7 +284,7 @@ facetG.each(function (facet) {
     .attr("class", "facet-title")
     .attr("x", leftPad)
     .attr("y", 40)
-    .attr("font-size", facet.key.includes("Precip") ? "1.1em" : "1.5em")
+    .attr("font-size", facet.key.includes("Precip") ? "1.5em" : "1.5em")
     .attr("font-weight", "400")
     .style("fill", colors.axisTitle)
     .style("font-style", facet.key === "E. coli" ? "italic" : "normal")
@@ -373,33 +377,32 @@ facetG.each(function (facet) {
 
   // Lines (fast draw, restore dash for historical)
   // Lines (do not draw Hist/Historical at all)
-  const linePaths = sG
-    .filter(d => !/hist|histor/i.test(String(d.key)))
-    .append("path")
-    .attr("class", "series-line")
-    .attr("fill", "none")
-    .attr("stroke", d => seriesColor(d.key))
-    .attr("stroke-width", 3)
-    .attr("d", d => line(d.values || []));
+const linePaths = sG
+  .filter(d =>
+    /hist|histor|precip/i.test(String(d.key)))
+  .append("path")
+  .attr("class", "series-line")
+  .attr("fill", "none")
+  .attr("stroke", d => seriesColor(d.key))
+  .attr("stroke-width", 3)
+  .attr("stroke-dasharray", d =>
+    /hist|histor/i.test(String(d.key)) ? "6,4" : null
+  )
+  .attr("opacity", 0)
+  .attr("d", d => line(d.values || []));
 
-  linePaths.each(function (d) {
-    const path = d3.select(this);
-    const total = this.getTotalLength();
-
-    path
-      .attr("stroke-dasharray", `${total} ${total}`)
-      .attr("stroke-dashoffset", total)
-      .transition()
-      .duration(1200)
-      .ease(d3.easeCubicOut)
-      .attr("stroke-dashoffset", 0)
-      .on("end", function () {
-        d3.select(this).attr("stroke-dasharray", null);
-      });
-  });
+linePaths
+  .transition()
+  .duration(1800)
+  .ease(d3.easeCubicOut)
+  .attr("opacity", 1);
 
   // Points (fast pulse + tooltips)
-  const targetR = d => /Precip/i.test(d.LabelName) ? 0 : 4;
+  const isPrecip = d =>
+    /precip/i.test(String(d.type)) ||
+    /precip/i.test(String(d.LabelName));
+
+  const targetR = d => isPrecip(d) ? 8 : 4;
 
   sG.each(function (s) {
     const g = d3.select(this);
@@ -415,42 +418,47 @@ facetG.each(function (facet) {
       .attr("opacity", 1)
       .attr("r", targetR)
       .attr("fill", seriesColor(s.key))
+      .attr("fill-opacity", d => isPrecip(d) ? 0 : 1)
       .style("cursor", "pointer");
 
+
     // quick pulse (no blank lag)
-    pts
-      .attr("r", d => (targetR(d) === 0 ? 0 : 5))
-      .transition()
-      .duration(900)
-      .ease(d3.easeCubicOut)
-      .attr("r", targetR);
+  pts
+    .attr("r", d => isPrecip(d) ? 8 : 5)
+    .transition()
+    .duration(900)
+    .ease(d3.easeCubicOut)
+    .attr("r", targetR);
 
     // Tooltip interactions
-    pts
-      .on("mouseover", function (d) {
-        // Skip if point is hidden
-        if (targetR(d) === 0) return;
+ // Tooltip interactions
+pts
+  .on("mouseover", function (d) {
+    // Only add a visible outline to non-precipitation points
+    if (!isPrecip(d)) {
+      d3.select(this)
+        .attr("stroke", "#030c13")
+        .attr("stroke-width", 2);
+    }
 
-        d3.select(this)
-          .attr("stroke", "#030c13")
-          .attr("stroke-width", 2);
+    tooltip
+      .html(tooltipHTML(d))
+      .style("opacity", 1);
+  })
+  .on("mousemove", function () {
+    tooltip
+      .style("left", (d3.event.pageX + 15) + "px")
+      .style("top", (d3.event.pageY + 15) + "px");
+  })
+  .on("mouseout", function (d) {
+    if (!isPrecip(d)) {
+      d3.select(this)
+        .attr("stroke", null)
+        .attr("stroke-width", null);
+    }
 
-        tooltip
-          .html(tooltipHTML(d))
-          .style("opacity", 1);
-      })
-      .on("mousemove", function () {
-        tooltip
-          .style("left", (d3.event.pageX + 15) + "px")
-          .style("top", (d3.event.pageY + 15) + "px");
-      })
-      .on("mouseout", function () {
-        d3.select(this)
-          .attr("stroke", null)
-          .attr("stroke-width", null);
-
-        tooltip.style("opacity", 0);
-      });
+    tooltip.style("opacity", 0);
+  });  
   });
 
 });

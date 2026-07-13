@@ -4,10 +4,11 @@ load_parquet_dataset <- function(filename) {
   if (nzchar(data_dir)) {
     path <- file.path(data_dir, filename)
   } else {
-    path <- system.file("extdata", filename, package = "FRMQuickBac")
+    path <- file.path("data", filename)
 
-    if (path == "") {
-      path <- file.path("inst", "extdata", filename)
+    if (path == "") 
+      {
+    path <- file.path("data", filename)
     }
   }
 
@@ -262,6 +263,7 @@ build_leaflet_legend <- function(watersheds) {
         <span style='
           {swatch_base}
           background:{.y};
+          opacity:0.36;
           border-radius:3px;
         '></span>
         <span style='{label_style}'>{.x}</span>
@@ -286,7 +288,7 @@ build_leaflet_legend <- function(watersheds) {
     <div style='{item_style}'>
       <span style='
         {swatch_base}
-        background:#651010ff;
+        background:#D97706;
         border-radius:50%;
       '></span>
       <span style='{label_style}'>Exceeds Standard</span>
@@ -295,7 +297,7 @@ build_leaflet_legend <- function(watersheds) {
     <div style='{item_style}'>
       <span style='
         {swatch_base}
-        background:#1d0e81ff;
+        background:  #2F4EA2;
         border-radius:50%;
       '></span>
       <span style='{label_style}'>Meets Standard</span>
@@ -337,9 +339,8 @@ wrangle_download_data <- function(yrs){
         dat |>
           dplyr::collect() |>
           dplyr::filter(Year %in% yrs) |>
-          dplyr::select(SiteCode, LabelName, WaterBody, Date, ReadingVal,  HoursDry, Precip72Hr) |>
+          dplyr::select(SiteCode, LabelName, WaterBody, Date, ReadingVal, Precip72Hr) |>
           tidyr::pivot_wider(names_from = LabelName, values_from = ReadingVal) |>
-          dplyr::relocate(HoursDry, .after = dplyr::last_col()) |>
           dplyr::relocate(Precip72Hr, .after = dplyr::last_col()) |>
           dplyr::select(
             SiteCode,
@@ -348,7 +349,6 @@ wrangle_download_data <- function(yrs){
             "Dissolved Oxygen (mg/L)" = "Dissolved Oxygen",
             "E. coli (CFU/100mL)" = "E. coli",
             "Fecal Coliform (CFU/100mL)" = "Fecal Coliform",
-            HoursDry,
             Precip72Hr)
 }
 

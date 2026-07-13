@@ -72,8 +72,8 @@ mod_filter_map_dat_server <- function(id, map_inputs){
             ),
             Color = dplyr::if_else(
               exceedance,
-              "#651010ff",
-              "#1d0e81ff"
+              "#D97706",
+              "#2F4EA2"
             )) |>
             dplyr::ungroup() 
           }

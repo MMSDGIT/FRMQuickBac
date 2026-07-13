@@ -23,21 +23,30 @@ app_ui <- function(request) {
       fullscreen = TRUE,
       header = bs4Dash::bs4DashNavbar(
         title = "Best Bacteria Report",
-        skin = "light"
+        skin = "light",
+        br(),
+    tags$a(
+      href = "https://www.mmsd.com/",
+      target = "_blank",
+      style = "cursor: pointer;",
+      tags$img(
+        src = "www/mmsd_logo.jpg",
+        style = "
+          display:block;
+          margin-left:35px;
+          width:186px;
+          transition: transform 0.15s ease, opacity 0.15s ease;
+        ",
+        onmouseover = "this.style.transform='scale(1.03)'; this.style.opacity='0.85';",
+        onmouseout  = "this.style.transform='scale(1)'; this.style.opacity='1';"
+      )
+    )
       ),
       sidebar = bs4Dash::bs4DashSidebar(
         skin = "dark",
         status = "primary",
         minified = TRUE,
     br(),
-    tags$a(
-      href = "https://www.mmsd.com/",
-      target = "_blank",
-      tags$img(
-        src = "www/mmsd_logo.jpg", 
-        style = "display:block; margin: 0 auto; width: 186px;"
-      )
-    ),
   tags$div(
     style = "padding: 12px 0;",
   ),

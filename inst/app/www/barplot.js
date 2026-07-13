@@ -395,7 +395,7 @@ const wqLine = svg.append("line")
   .attr("x2", xStd)
   .attr("y1", yTop)
   .attr("y2", yTop)               // start collapsed
-  .attr("stroke", "#C0392B")
+  .attr("stroke", "#696262ff")
   .attr("stroke-width", 2)
   .attr("stroke-dasharray", "6,4")
   .attr("opacity", 0.9);
@@ -412,7 +412,7 @@ const label = svg.append("text")
   .attr("text-anchor", "middle")
   .attr("font-family", "Segoe UI, sans-serif")
   .attr("font-size", "0.9em")
-  .attr("fill", "#C0392B")
+  .attr("fill", "#696262ff")
   .attr("font-weight", 600)
   .attr("opacity", 0)
   .text("WQ Standard");

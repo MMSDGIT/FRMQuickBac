@@ -65,6 +65,14 @@ output$loc_map <- leaflet::renderLeaflet({
     dplyr::filter(grepl("Precip", type)) |>
     dplyr::slice(1)
 
+ws_info <- 
+  readRDS("data/ws_lookup.rds") |> 
+  dplyr::select(
+    station_id = WeatherStation, 
+    Latitude = Lat, 
+    Longitude =  Long, 
+    SiteDescription = Description)
+
 #site label
   site_lon <- site_info$Longitude
   site_lat <- site_info$Latitude
@@ -143,6 +151,7 @@ output$loc_map <- leaflet::renderLeaflet({
         )
       )
     })
+    
     output$ts_plot <-  r2d3::renderD3({
       df <- 
         dat() |>

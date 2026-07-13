@@ -35,7 +35,7 @@ mod_download_filter_tbl_dat_server <- function(id, tbl_inputs){
         dat |>
           dplyr::collect() |>
           dplyr::filter(Year %in% years) |>
-          dplyr::select(SiteCode, LabelName, WaterBody, Date, ReadingVal,  HoursDry, Precip72Hr) |>
+          dplyr::select(SiteCode, LabelName, WaterBody, Date, ReadingVal, Precip72Hr) |>
           tidyr::pivot_wider(names_from = LabelName, values_from = ReadingVal) |>
           dplyr::relocate(HoursDry, .after = dplyr::last_col()) |>
           dplyr::relocate(Precip72Hr, .after = dplyr::last_col()) |>
@@ -45,9 +45,8 @@ mod_download_filter_tbl_dat_server <- function(id, tbl_inputs){
             WaterBody,
             Date,
             "Dissolved Oxygen (mg/L)" = "Dissolved Oxygen",
-            "E. coli (CFU/100mL)" = "E. coli",
+            "E. coli (MPN/100mL)" = "E. coli",
             "Fecal Coliform (CFU/100mL)" = "Fecal Coliform", 
-            HoursDry,
             Precip72Hr)
       
     })

@@ -67,12 +67,12 @@ ws_lookup_sf_filt <- reactive({
           leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron, group = "Simple") |>
           leaflet::addProviderTiles(leaflet::providers$Esri.WorldStreetMap, group = "Street Map") |>
           leaflet::addProviderTiles(leaflet::providers$Esri.WorldImagery, group = "Satellite") |>
-          leaflet::addProviderTiles(leaflet::providers$Stadia.StamenWatercolor, group = "WaterColor") |>
           leaflet::setView(lng = -87.99, lat = 43.15, zoom = 10) |>
           leaflet::addLayersControl(
-            baseGroups = c("Simple", "Street Map", "Satellite", "WaterColor"),
-            overlayGroups = c("WeatherStations")
-      ) 
+            baseGroups = c("Simple", "Street Map", "Satellite"),
+            overlayGroups = c("WeatherStations") 
+      ) |>
+          leaflet::hideGroup("WeatherStations")
     }) 
 #circle markers
 observe({
@@ -100,7 +100,7 @@ observe({
         options = leaflet::pathOptions(zIndex = 200),
         color = "gray50",
         opacity = 0.8,
-        fillOpacity = 0.36,
+        fillOpacity = 0.22,
         weight = 1,
         fillColor = ~pal2(HUC10_NAME)
       )
@@ -119,26 +119,31 @@ observe({
       )
   }
 
-  # ---- Rivers ----
-  ws <- ws_lookup_sf_filt()
-  if (inherits(riv, "sf") && nrow(riv) > 0) {
-    proxy |>
-      leaflet::addCircleMarkers(
-        data = ws,
-        color = "black",
-        fillColor = "gray80",
-        fillOpacity = 0.5,
-        weight = 2,
-        radius = 5,
-        group = "WeatherStations",
-        popup = ~render_template(
-        "ws_popup",
-        WeatherStation = WeatherStation,
-        Description = Description
-              ),
-        options = leaflet::pathOptions(zIndex = 9999)
-      )
-  }
+  # Weather Stations 
+# Weather Stations
+# Weather Stations
+ws <- ws_lookup_sf_filt()
+ws_icon <- leaflet::makeIcon(
+  iconUrl = "inst/app/www/raindrop.png",
+  iconWidth = 90,
+  iconHeight = 90,
+  iconAnchorX = 0,
+  iconAnchorY = 0
+)
+  
+if (inherits(ws, "sf") && nrow(ws) > 0) {
+ proxy |>
+  leaflet::addMarkers(
+    data = ws,
+    icon = ws_icon,
+    group = "WeatherStations",
+    popup = ~render_template(
+      "ws_popup",
+      WeatherStation = WeatherStation,
+      Description = Description
+    )
+  )
+}
 
   # ---- Sites (points) ----
   df <- dat_filt()

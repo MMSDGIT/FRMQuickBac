@@ -113,7 +113,7 @@ output$map_dt <- DT::renderDataTable({
   rng <- range(df$Result, na.rm = TRUE)
 
   DT::datatable(
-    dplyr::select(df, Time, Site, Result, SiteDescription, Color) |>
+    dplyr::select(df, Site, Time, Result, SiteDescription, Color) |>
       dplyr::arrange(dplyr::desc(Result)),
     rownames = FALSE,
     selection = "multiple",
@@ -141,7 +141,7 @@ output$map_dt <- DT::renderDataTable({
     )
   ) |>
     DT::formatStyle(
-      columns = c("Time", "Site", "Result", "SiteDescription"),
+      columns = c("Site", "Time", "Result", "SiteDescription"),
       valueColumns = "Color",
       color = DT::styleValue()
     )
