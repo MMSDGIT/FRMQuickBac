@@ -1,3 +1,30 @@
+#' Open a Parquet dataset
+#'
+#' Locates and opens a Parquet dataset using either the directory specified
+#' by the `FRMQUICKBAC_DATA_DIR` environment variable or the project's local
+#' `data` directory.
+#'
+#' The dataset is opened lazily using [arrow::open_dataset()]. Data are not
+#' fully loaded into memory until an operation such as [dplyr::collect()] is
+#' called.
+#'
+#' @param filename A character string containing the Parquet file or directory
+#'   name, such as `"survey_dat.parquet"`.
+#'
+#' @return An Arrow `Dataset` object.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' survey_data <- load_parquet_dataset("survey_dat.parquet")
+#'
+#' names(survey_data)
+#'
+#' survey_data |>
+#'   dplyr::collect() |>
+#'   names()
+#' }
 load_parquet_dataset <- function(filename) {
   data_dir <- Sys.getenv("FRMQUICKBAC_DATA_DIR", unset = "")
 
@@ -5,28 +32,74 @@ load_parquet_dataset <- function(filename) {
     path <- file.path(data_dir, filename)
   } else {
     path <- file.path("data", filename)
-
-    if (path == "") 
-      {
-    path <- file.path("data", filename)
-    }
   }
 
   if (!file.exists(path)) {
-    stop("Could not find file: ", filename, " at: ", path, call. = FALSE)
+    stop(
+      "Could not find file: ",
+      filename,
+      " at: ",
+      path,
+      call. = FALSE
+    )
   }
 
   arrow::open_dataset(path)
 }
 
+
+#' Load survey data
+#'
+#' Opens the `survey_dat.parquet` dataset from the configured FRMQuickBac data
+#' directory.
+#'
+#' The dataset is returned lazily. Use [dplyr::collect()] to load it into an
+#' in-memory data frame.
+#'
+#' @return An Arrow `Dataset` containing survey data.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' survey_data <- load_survey_data()
+#'
+#' names(survey_data)
+#'
+#' survey_data |>
+#'   dplyr::collect() |>
+#'   names()
+#' }
 load_survey_data <- function() {
   load_parquet_dataset("survey_dat.parquet")
 }
 
+
+#' Load precipitation data
+#'
+#' Opens the `precip_data.parquet` dataset from the configured FRMQuickBac data
+#' directory.
+#'
+#' The dataset is returned lazily. Use [dplyr::collect()] to load it into an
+#' in-memory data frame.
+#'
+#' @return An Arrow `Dataset` containing precipitation data.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' precip_data <- load_precip_data()
+#'
+#' names(precip_data)
+#'
+#' precip_data |>
+#'   dplyr::collect() |>
+#'   names()
+#' }
 load_precip_data <- function() {
   load_parquet_dataset("precip_data.parquet")
 }
-
 
 custom_theme <- function() {
   ggplot2::theme_minimal(base_size = 20) +
