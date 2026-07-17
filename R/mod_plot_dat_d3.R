@@ -96,7 +96,7 @@ ws_info <-
         Description = ws_desc
               )
 ws_icon <- leaflet::makeIcon(
-  iconUrl = "inst/app/www/raindrop.png",
+  iconUrl = "www/raindrop.png",
   iconWidth = 14,
   iconHeight = 20,
   iconAnchorX = 0,
