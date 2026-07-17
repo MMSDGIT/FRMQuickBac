@@ -63,6 +63,19 @@ fmt_num <- function(x) {
      </tr>"
   ) |> glue::glue_collapse(sep = "\n")
       
+#format for title
+units <- 
+  switch(
+    param_name,
+    "E. coli" = "MPN/100mL",
+    "Fecal Coliform" = "CFU/100mL",
+    "Dissolved Oxygen" = "mg/L")
+
+    param_name <- 
+      dplyr::if_else(
+        param_name == 'E. coli', 
+        glue::glue("<i>{param_name}</i>"), 
+        param_name)
 
   # Now inject the prebuilt rows string into the outer template
   render_template(
@@ -70,9 +83,11 @@ fmt_num <- function(x) {
     current_year = current_year,
     current_color = current_color, 
     other_color = other_color, 
-    rows_html = rows_html
+    rows_html = rows_html,
+    param = param_name,
+    units = units
   )
-}
+  }
     }
 
 html_table <- generate_summary_table(df)

@@ -162,11 +162,51 @@ d3.selectAll("div.r2d3-tooltip").remove();
 const tooltip = d3.select("body")
   .append("div")
   .attr("class", "r2d3-tooltip")
-  .style("position", "absolute")
+  .style("position", "fixed")
   .style("pointer-events", "none")
   .style("opacity", 0)
   .style("z-index", 9999);
 
+function positionTooltip() {
+  const event = d3.event;
+  const node = tooltip.node();
+
+  if (!event || !node) return;
+
+  const gap = 15;
+  const edgePadding = 10;
+
+  const tooltipWidth = node.offsetWidth;
+  const tooltipHeight = node.offsetHeight;
+
+  let left = event.clientX + gap;
+  let top = event.clientY + gap;
+
+  // Move left of the cursor near the right edge
+  if (left + tooltipWidth > window.innerWidth - edgePadding) {
+    left = event.clientX - tooltipWidth - gap;
+  }
+
+  // Move above the cursor near the bottom edge
+  if (top + tooltipHeight > window.innerHeight - edgePadding) {
+    top = event.clientY - tooltipHeight - gap;
+  }
+
+  // Keep it fully inside the viewport
+  left = Math.max(
+    edgePadding,
+    Math.min(left, window.innerWidth - tooltipWidth - edgePadding)
+  );
+
+  top = Math.max(
+    edgePadding,
+    Math.min(top, window.innerHeight - tooltipHeight - edgePadding)
+  );
+
+  tooltip
+    .style("left", `${left}px`)
+    .style("top", `${top}px`);
+}
 
 // ============================================================================
 // DATA PREP
@@ -305,11 +345,11 @@ bars
     tooltip
       .html(d.TooltipHTML || "")
       .style("opacity", 1);
+
+    positionTooltip();
   })
   .on("mousemove", function () {
-    tooltip
-      .style("left", (d3.event.pageX + 15) + "px")
-      .style("top", (d3.event.pageY + 15) + "px");
+    positionTooltip();
   })
   .on("mouseout", function () {
     d3.select(this)
@@ -319,7 +359,6 @@ bars
 
     tooltip.style("opacity", 0);
   });
-
 
 // ============================================================================
 // Y AXIS

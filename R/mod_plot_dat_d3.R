@@ -45,7 +45,7 @@ mod_plot_dat_d3_server <- function(id, dat){
     observeEvent(input$open_loc_map, {
 
   showModal(modalDialog(
-    title = "Survey Site & Weather Station Location",
+    title = "Survey Site & Rain Gauge Locations",
     leaflet::leafletOutput(ns("loc_map"), height = 500),
     easyClose = TRUE,
     size = "l",
@@ -95,7 +95,13 @@ ws_info <-
         WeatherStation = ws_code,
         Description = ws_desc
               )
-  
+ws_icon <- leaflet::makeIcon(
+  iconUrl = "inst/app/www/raindrop.png",
+  iconWidth = 14,
+  iconHeight = 20,
+  iconAnchorX = 0,
+  iconAnchorY = 0
+)
   #legend
 
   leaflet::leaflet() |>
@@ -109,14 +115,10 @@ ws_info <-
       weight = 2,
       radius = 7, 
       popup = site_label) |>
-    leaflet::addCircleMarkers(
+    leaflet::addMarkers(
       lng = ws_lon,
       lat = ws_lat,
-      radius = 7,
-      color = "black",
-      fillColor = "gray80",
-      fillOpacity = 0.5,
-      weight = 2,
+      icon = ws_icon,
       popup = ws_label) |>
     leaflet::fitBounds(
       lng1 = min(site_lon, ws_lon),
@@ -156,7 +158,11 @@ ws_info <-
       df <- 
         dat() |>
           dplyr::mutate(
-            Color = dplyr::if_else(grepl("Historic", type), "#0e770eff", "#064789"),
+            Color = 
+              dplyr::case_when(
+                grepl("Historic", type) ~ "#0e770eff", 
+                grepl("Precip", type) ~ "#2F80C9",
+                TRUE ~ "#064789"),
             DatStr = format(as.Date(dat()$Date), "%Y-%m-%d")
           )
     r2d3::r2d3(

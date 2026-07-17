@@ -133,7 +133,7 @@
           opacity:0.85;
         " onmouseenter="this.querySelector('.tip').style.opacity='1'; this.querySelector('.tip').style.transform='translateY(0)'"
           onmouseleave="this.querySelector('.tip').style.opacity='0'; this.querySelector('.tip').style.transform='translateY(6px)'">
-          <i class="fa-solid fa-circle-info" style="font-size:0.75em;"></i>
+          <i class="fa-solid fa-circle-info" style="font-size:1.5em;"></i>
 
           <div class="tip" style="
             position:absolute;
@@ -169,6 +169,101 @@
         </span>
       </span>
     </div>
+    <!-- Daily precipitation -->
+<div style="
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.75em;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(47,128,201,0.09);
+  border:1px solid rgba(47,128,201,0.22);
+">
+  <!-- Line-style legend symbol -->
+  <span style="
+    width:22px;
+    height:4px;
+    border-radius:999px;
+    background-color:#2F80C9;
+    display:inline-block;
+    box-shadow:0 0 0 3px rgba(47,128,201,0.10);
+  "></span>
 
-  </div>
+  <span style="
+    color:#2F80C9;
+    font-weight:700;
+    font-size:0.75em;
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  ">
+    Total Daily Precipitation
+
+    <span style="
+      cursor:help;
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      color:#0A2B43;
+      opacity:0.85;
+    "
+      onmouseenter="
+        this.querySelector('.tip').style.opacity='1';
+        this.querySelector('.tip').style.transform='translate(-50%, 0)';
+      "
+      onmouseleave="
+        this.querySelector('.tip').style.opacity='0';
+        this.querySelector('.tip').style.transform='translate(-50%, 6px)';
+      "
+    >
+      <i class="fa-solid fa-circle-info" style="font-size:1.5em;"></i>
+
+      <div class="tip" style="
+        position:absolute;
+        top:26px;
+        left:50%;
+        transform:translate(-50%, 6px);
+        width:360px;
+        padding:12px 14px;
+        background:rgba(20,30,45,0.95);
+        color:#fff;
+        font-size:15px;
+        line-height:1.45;
+        border-radius:12px;
+        box-shadow:0 14px 30px rgba(0,0,0,0.35);
+        opacity:0;
+        pointer-events:none;
+        transition:opacity 0.15s ease, transform 0.15s ease;
+        z-index:9999;
+        text-align:left;
+        border:1px solid rgba(255,255,255,0.12);
+      ">
+        <div style="
+          font-weight:800;
+          font-size:1.25em;
+          margin-bottom:8px;
+        ">
+          Total Daily Precipitation
+        </div>
+
+        <div style="opacity:0.95;">
+          Total daily precipitation is measured at the nearest available
+          MMSD rain gauge.
+        </div>
+
+        <div style="
+          margin-top:8px;
+          font-style:italic;
+          opacity:0.85;
+        ">
+          Select <strong>See Map</strong> to view the selected survey site
+          and all MMSD rain gauges.
+        </div>
+      </div>
+    </span>
+  </span>
+</div>
+  </div>  
 </div>

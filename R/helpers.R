@@ -346,14 +346,17 @@ build_leaflet_legend <- function(watersheds) {
 
   # ---- weather stations ----
   weather_station <- glue::glue("
-    <div style='{item_style}'>
-      <span style='
-        {swatch_base}
-        background:#979ea8;
-        border-radius:50%;
-      '></span>
-      <span style='{label_style}'>Rain Gauges</span>
-    </div>
+<div style='{item_style}'>
+  <img
+    src='www/raindrop.png'
+    alt='Rain Gauge'
+    style='
+      {swatch_base}
+      object-fit:contain;
+    '
+  />
+  <span style='{label_style}'>Rain Gauges</span>
+</div>
   ")
 
   # ---- sample sites ----

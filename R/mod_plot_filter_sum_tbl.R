@@ -19,25 +19,46 @@ mod_plot_filter_sum_tbl_server <- function(id, selected_inputs, param){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     dat <- load_survey_data()
-    shiny::reactive({
-    year <- selected_inputs()[["years"]] 
-    site <- selected_inputs()[["site"]]
-      dat |>
-        dplyr::filter(SiteCode == site) |> 
-        dplyr::filter(LabelName == param) |>
-        dplyr::collect() |> 
-        dplyr::mutate(CurrentYear = dplyr::if_else(Year == year, as.character(year), 'Other')) |>
-        dplyr::group_by(CurrentYear, LabelName) |>
-        dplyr::summarise(
-          Maximum = max(ReadingNum, na.rm = TRUE),
-          Mean= mean(ReadingNum, na.rm = TRUE),
-          Median = median(ReadingNum, na.rm = TRUE),
-          Minimum = min(ReadingNum, na.rm = TRUE)
-        ) |>
-        tidyr::pivot_longer(
-          cols = c("Maximum", "Mean", "Median", "Minimum")
-        )  |>
-          tidyr::pivot_wider(names_from = CurrentYear, values_from = value)
+
+shiny::reactive({
+
+  year <- selected_inputs()[["years"]]
+  site <- selected_inputs()[["site"]]
+
+  survey_data <- dat |>
+    dplyr::filter(
+      SiteCode == site,
+      LabelName == param
+    ) |>
+    dplyr::collect()
+
+  dplyr::bind_rows(
+
+    # Selected year only
+    survey_data |>
+      dplyr::filter(as.character(Year) == as.character(year)) |>
+      dplyr::mutate(CurrentYear = as.character(year)),
+
+    # Complete dataset, including the selected year
+    survey_data |>
+      dplyr::mutate(CurrentYear = "Other")
+
+  ) |>
+    dplyr::group_by(CurrentYear, LabelName) |>
+    dplyr::summarise(
+      Maximum = max(ReadingNum, na.rm = TRUE),
+      Mean    = mean(ReadingNum, na.rm = TRUE),
+      Median  = median(ReadingNum, na.rm = TRUE),
+      Minimum = min(ReadingNum, na.rm = TRUE),
+      .groups = "drop"
+    ) |>
+    tidyr::pivot_longer(
+      cols = c("Maximum", "Mean", "Median", "Minimum")
+    ) |>
+    tidyr::pivot_wider(
+      names_from = CurrentYear,
+      values_from = value
+    )
     })
     })
 }

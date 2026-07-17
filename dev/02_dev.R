@@ -45,6 +45,7 @@ golem::add_module(name = "plot_sum_tbl", with_test = TRUE) # Name of the module
 #Download modlue
 golem::add_module(name = "download_page", with_test = TRUE) # Name of the module
 golem::add_module(name = "selection_pane_table", with_test = TRUE) # Name of the module
+golem::add_module(name = "download_disclaimer", with_test = TRUE) # Name of the module
 golem::add_module(name = "download_table_dt", with_test = TRUE) # Name of the module
 golem::add_module(name = "download_filter_tbl_dat", with_test = TRUE) # Name of the module
 

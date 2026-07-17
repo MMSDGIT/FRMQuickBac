@@ -5,7 +5,7 @@
 
 # RStudio project files
 .Rproj.user/
-
+data/
 # renv local library (packages get restored from renv.lock instead)
 renv/library/
 renv/staging/

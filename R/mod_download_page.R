@@ -13,7 +13,7 @@ mod_download_page_ui <- function(id) {
     shiny::fluidRow(
       shiny::column(3,
         shiny::fluidRow(mod_selection_pane_table_ui("selection_pane_table_1")),
-        shiny::fluidRow()),
+        shiny::fluidRow(mod_download_disclaimer_ui("download_disclaimer"))),
       shiny::column(9,
         mod_download_table_dt_ui("download_table_dt_1")
       )))

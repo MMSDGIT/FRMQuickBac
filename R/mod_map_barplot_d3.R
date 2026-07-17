@@ -34,11 +34,14 @@ mod_map_barplot_d3_server <- function(id, dat) {
       no_records <- nrow(df) == 0
       survey_dat <- if (!no_records) unique(df$Date)[1] else NA
       param <- if (!no_records) unique(df$LabelName)[1] else "No data"
-      title <- if (!no_records) {
-        glue::glue("Survey Results for {param}")
-      } else {
-        "Survey Results"
-      }
+      title <-
+        if (no_records) {
+          "Survey Results"
+        } else if (grepl("E. coli", param, ignore.case = TRUE)) {
+          glue::glue("Survey Results for <i>{param}</i>")
+        } else {
+          glue::glue("Survey Results for {param}")
+        }
       subtitle <- if (!no_records) {
         glue::glue("{survey_dat}")
       } else {

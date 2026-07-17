@@ -70,9 +70,9 @@ ws_lookup_sf_filt <- reactive({
           leaflet::setView(lng = -87.99, lat = 43.15, zoom = 10) |>
           leaflet::addLayersControl(
             baseGroups = c("Simple", "Street Map", "Satellite"),
-            overlayGroups = c("WeatherStations") 
+            overlayGroups = c("Rain Gauges") 
       ) |>
-          leaflet::hideGroup("WeatherStations")
+          leaflet::hideGroup("Rain Gauges")
     }) 
 #circle markers
 observe({
@@ -125,8 +125,8 @@ observe({
 ws <- ws_lookup_sf_filt()
 ws_icon <- leaflet::makeIcon(
   iconUrl = "inst/app/www/raindrop.png",
-  iconWidth = 90,
-  iconHeight = 90,
+  iconWidth = 14,
+  iconHeight = 20,
   iconAnchorX = 0,
   iconAnchorY = 0
 )
@@ -136,12 +136,13 @@ if (inherits(ws, "sf") && nrow(ws) > 0) {
   leaflet::addMarkers(
     data = ws,
     icon = ws_icon,
-    group = "WeatherStations",
+    group = "Rain Gauges",
     popup = ~render_template(
       "ws_popup",
       WeatherStation = WeatherStation,
       Description = Description
-    )
+    ), 
+    options = leaflet::pathOptions(zIndex = 600)
   )
 }
 
@@ -169,7 +170,7 @@ if (inherits(ws, "sf") && nrow(ws) > 0) {
       radius = 7,
       fillOpacity = 1,
       group = "sites",
-      options = leaflet::pathOptions(zIndex = 600),
+      options = leaflet::pathOptions(zIndex = 800),
       popup = ~render_template(
         "leaflet_popup",
         Result = Result,

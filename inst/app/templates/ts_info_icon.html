@@ -27,25 +27,72 @@
     <span class="plot-subline-label"><strong>Date: </strong> &nbsp;</span>
     <span class="plot-subline-value">{date_range}</span>
   </div>
+<div class="plot-subline" style="
+  margin-top:0.5em;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+  font-size:1em;
+  color:#4b6b82;
+  max-width:900px;
+  line-height:1.4;
+">
 
-  <div class="plot-subline" style="
-      margin-top:0.5em;
-      font-size:1em;
-      color:#4b6b82;
-      max-width:900px;
-      line-height:1.4;
-      text-align:left;
+  <span style="font-weight:700; color:#4b6b82;">
+    Sample Status:
+  </span>
+
+  <!-- Exceeds -->
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:8px;
+  ">
+    <span style="
+      width:22px;
+      height:4px;
+      border-radius:999px;
+      background:#D97706;
+      display:inline-block;
+      box-shadow:0 0 0 3px rgba(217,119,6,0.10);
+    "></span>
+
+    <span style="
+      color:#D97706;
+      font-weight:700;
+      font-size:0.75em;
     ">
-    <span class="plot-legend-title"><strong> Sample Exceeds Standard: </strong></span>
-    <span class="legend-item">
-      <span class="legend-label" style="color:  #D97706;"> Exceeds
-      </span>
-      <span> | </span>
-      <span class=" legend-item">
-        <span class="legend-label" style="color: #2F4EA2;"> Meets
-        </span>
-      </span>
+      Exceeds Standard
+    </span>
   </div>
+
+  <!-- Meets -->
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:8px;
+  ">
+    <span style="
+      width:22px;
+      height:4px;
+      border-radius:999px;
+      background:#2F4EA2;
+      display:inline-block;
+      box-shadow:0 0 0 3px rgba(47,78,162,0.10);
+    "></span>
+
+    <span style="
+      color:#2F4EA2;
+      font-weight:700;
+      font-size:0.75em;
+    ">
+      Meets Standard
+    </span>
+  </div>
+
+</div>
+  
   <div class=" plot-subline" style="
       margin-top:0.5em;
       font-size:1em;
@@ -94,9 +141,9 @@
                   Precipitation Data
                 </div>
                 <div style="opacity:0.95;">
-                  Values represent total precipitation throghout the basin during the 72 hours prior to sampling.
+                  Values represent total precipitation throghout the basin during the 48 hours prior to sampling.
                   The range reflects min and max based on current page filters. See the Precipitation section in the
-                  background page for more information about our weather stations.
+                  background page for more information about our rain gauges.
                   </ul>
                 </div>
               </div>

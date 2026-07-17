@@ -16,7 +16,7 @@ d3.selectAll("div.r2d3-tooltip").remove();
 const tooltip = d3.select("body")
   .append("div")
   .attr("class", "r2d3-tooltip")
-  .style("position", "absolute")
+  .style("position", "fixed")
   .style("pointer-events", "none")
   .style("opacity", 0)
   .style("z-index", 9999);
@@ -94,6 +94,48 @@ function tooltipHTML(d) {
     </tbody>
   </table>
 </div>`;
+}
+
+
+function positionTooltip() {
+  const event = d3.event;
+  const node = tooltip.node();
+
+  if (!event || !node) return;
+
+  const gap = 15;
+  const edgePadding = 10;
+
+  const tooltipWidth = node.offsetWidth;
+  const tooltipHeight = node.offsetHeight;
+
+  let left = event.clientX + gap;
+  let top = event.clientY + gap;
+
+  // Flip to the left when it would run off the right side
+  if (left + tooltipWidth > window.innerWidth - edgePadding) {
+    left = event.clientX - tooltipWidth - gap;
+  }
+
+  // Flip above the cursor when it would run off the bottom
+  if (top + tooltipHeight > window.innerHeight - edgePadding) {
+    top = event.clientY - tooltipHeight - gap;
+  }
+
+  // Final clamp so it always remains inside the viewport
+  left = Math.max(
+    edgePadding,
+    Math.min(left, window.innerWidth - tooltipWidth - edgePadding)
+  );
+
+  top = Math.max(
+    edgePadding,
+    Math.min(top, window.innerHeight - tooltipHeight - edgePadding)
+  );
+
+  tooltip
+    .style("left", `${left}px`)
+    .style("top", `${top}px`);
 }
 
 // ---- Layout constants ----
@@ -431,10 +473,8 @@ linePaths
     .attr("r", targetR);
 
     // Tooltip interactions
- // Tooltip interactions
 pts
   .on("mouseover", function (d) {
-    // Only add a visible outline to non-precipitation points
     if (!isPrecip(d)) {
       d3.select(this)
         .attr("stroke", "#030c13")
@@ -444,11 +484,11 @@ pts
     tooltip
       .html(tooltipHTML(d))
       .style("opacity", 1);
+
+    positionTooltip();
   })
   .on("mousemove", function () {
-    tooltip
-      .style("left", (d3.event.pageX + 15) + "px")
-      .style("top", (d3.event.pageY + 15) + "px");
+    positionTooltip();
   })
   .on("mouseout", function (d) {
     if (!isPrecip(d)) {
