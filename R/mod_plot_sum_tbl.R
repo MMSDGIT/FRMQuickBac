@@ -10,9 +10,14 @@
 mod_plot_sum_tbl_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  tab_title <- function(txt) {
-    tags$span(style = "font-size: 0.9rem; font-weight: 700;", txt)
-  }
+
+tab_title <- function(txt) {
+  tags$span(
+    style = "font-size: 0.9rem; font-weight: 700;",
+    if (txt == "E. coli") tags$i(txt) else txt
+  )
+}
+
 
   shiny::tagList(
     bs4Dash::bs4Card(

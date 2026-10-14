@@ -454,7 +454,7 @@ const label = svg.append("text")
   .attr("fill", "#696262ff")
   .attr("font-weight", 600)
   .attr("opacity", 0)
-  .text("WQ Standard");
+  .text("Threshold");
 
 label.transition()
   .delay(450)

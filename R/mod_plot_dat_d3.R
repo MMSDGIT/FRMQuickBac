@@ -46,9 +46,9 @@ mod_plot_dat_d3_server <- function(id, dat){
 
   showModal(modalDialog(
     title = "Survey Site & Rain Gauge Locations",
-    leaflet::leafletOutput(ns("loc_map"), height = 500),
+    leaflet::leafletOutput(ns("loc_map"), height = 600),
     easyClose = TRUE,
-    size = "l",
+    size = "xl",
     footer = modalButton("Close")
   ))
 })
@@ -97,15 +97,15 @@ ws_info <-
               )
 ws_icon <- leaflet::makeIcon(
   iconUrl = "www/raindrop.png",
-  iconWidth = 14,
-  iconHeight = 20,
+  iconWidth = 16,
+  iconHeight = 23,
   iconAnchorX = 0,
   iconAnchorY = 0
 )
   #legend
 
   leaflet::leaflet() |>
-    leaflet::addProviderTiles("CartoDB.Positron") |>
+    leaflet::addProviderTiles(leaflet::providers$Esri.WorldStreetMap) |>
     leaflet::addCircleMarkers(
       lng = site_lon,
       lat = site_lat, 

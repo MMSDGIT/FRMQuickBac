@@ -30,175 +30,182 @@ mod_leaflet_map_ui <- function(id) {
 #' leaflet_map Server Functions
 #'
 #' @noRd 
+
+#' @noRd
+
+#' @noRd
 mod_leaflet_map_server <- function(id, dat_filt, map_inputs, map_selection) {
   moduleServer(id, function(input, output, session) {
-    ns <- session$ns
 
+    # ---- Static spatial data ----
+    mke_basin_sf <- readRDS("data/mke_basin_sf.rds")
+    mke_rivers_sf <- readRDS("data/mke_rivers_sf.rds")
+    ws_lookup_sf <- readRDS("data/ws_lookup_sf.rds")
 
-    mke_basin_sf_filt <- reactive({
-      watershed <- unique(dat_filt()$Watershed) 
-      
-      bas  <- readRDS("data/mke_basin_sf.rds")
-      if (is.null(watershed) || !("HUC10_NAME" %in% names(bas))) {
-        return(bas[0, , drop = FALSE])
+    # ---- Render map with permanent geographic layers ----
+    output$map <- leaflet::renderLeaflet({
+
+      watershed_levels <- c(
+        "Cedar Creek",
+        "Menomonee River",
+        "Kinnickinnic River",
+        "Lower Milwaukee River"
+      )
+
+      pal2 <- leaflet::colorFactor(
+        palette = "viridis",
+        domain = watershed_levels
+      )
+
+      map <- leaflet::leaflet() |>
+        leaflet::addProviderTiles(
+          leaflet::providers$Esri.WorldStreetMap,
+          group = "Street Map"
+        ) |>
+        leaflet::addProviderTiles(
+          leaflet::providers$Esri.WorldImagery,
+          group = "Satellite"
+        ) |>
+        leaflet::setView(
+          lng = -87.99,
+          lat = 43.15,
+          zoom = 10
+        )
+
+      # ---- Permanent watershed polygons ----
+      if (inherits(mke_basin_sf, "sf") && nrow(mke_basin_sf) > 0) {
+        map <- map |>
+          leaflet::addPolygons(
+            data = mke_basin_sf,
+            group = "basins",
+            options = leaflet::pathOptions(zIndex = 200),
+            color = "gray50",
+            opacity = 0.8,
+            fillOpacity = 0.22,
+            weight = 1,
+            fillColor = ~pal2(HUC10_NAME)
+          )
       }
-      idx <- bas$HUC10_NAME %in% watershed
-      out <- bas[idx, , drop = FALSE]
-      if (nrow(out) == 0) bas[0, , drop = FALSE] else out
+
+      # ---- Permanent rivers ----
+      if (inherits(mke_rivers_sf, "sf") && nrow(mke_rivers_sf) > 0) {
+        map <- map |>
+          leaflet::addPolylines(
+            data = mke_rivers_sf,
+            color = "blue",
+            weight = 2,
+            group = "rivers",
+            options = leaflet::pathOptions(zIndex = 400)
+          )
+      }
+
+      # ---- Permanent weather stations ----
+      ws_icon <- leaflet::makeIcon(
+        iconUrl = "www/raindrop.png",
+        iconWidth = 16,
+        iconHeight = 23,
+        iconAnchorX = 0,
+        iconAnchorY = 0
+      )
+
+      if (inherits(ws_lookup_sf, "sf") && nrow(ws_lookup_sf) > 0) {
+        map <- map |>
+          leaflet::addMarkers(
+            data = ws_lookup_sf,
+            icon = ws_icon,
+            group = "Rain Gauges",
+            popup = ~render_template(
+              "ws_popup",
+              WeatherStation = WeatherStation,
+              Description = Description
+            ),
+            options = leaflet::pathOptions(zIndex = 600)
+          )
+      }
+
+      # ---- Layer controls ----
+      map |>
+        leaflet::addLayersControl(
+          baseGroups = c("Street Map", "Satellite"),
+          overlayGroups = c("Rain Gauges")
+        ) |>
+        leaflet::hideGroup("Rain Gauges")
     })
 
-mke_rivers_sf_filt <- reactive({
-  watershed <- unique(dat_filt()$Watershed) 
-  riv <- readRDS("data/mke_rivers_sf.rds")
-  if (is.null(watershed)) return(riv[0, , drop = FALSE])
-  riv[riv$HUC10_NAME %in% watershed, , drop = FALSE]
-}) 
-    
-ws_lookup_sf_filt <- reactive({
-  ws_in_dat <- unique(dat_filt()$WeatherStation) 
-  ws_lookup_sf <- readRDS("data/ws_lookup_sf.rds")
-  if (is.null(ws_in_dat)) return(ws_lookup_sf[0, , drop = FALSE])
-  ws_lookup_sf[ws_lookup_sf$WeatherStation %in% ws_in_dat, , drop = FALSE]
-}) 
-  
-    # render map --------------------------------------------------------------
-    output$map <- leaflet::renderLeaflet({
-        leaflet::leaflet() |>
-          leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron, group = "Simple") |>
-          leaflet::addProviderTiles(leaflet::providers$Esri.WorldStreetMap, group = "Street Map") |>
-          leaflet::addProviderTiles(leaflet::providers$Esri.WorldImagery, group = "Satellite") |>
-          leaflet::setView(lng = -87.99, lat = 43.15, zoom = 10) |>
-          leaflet::addLayersControl(
-            baseGroups = c("Simple", "Street Map", "Satellite"),
-            overlayGroups = c("Rain Gauges") 
-      ) |>
-          leaflet::hideGroup("Rain Gauges")
-    }) 
-#circle markers
-observe({
-observe({
-  proxy <- leaflet::leafletProxy(ns("map"))
+    # ---- Dynamic site markers ----
+    observe({
 
-  # Always clear dynamic layers/controls first so stale stuff never persists
-  proxy |>
-    leaflet::clearGroup("basins") |>
-    leaflet::clearGroup("rivers") |>
-    leaflet::clearGroup("sites") |>
-    leaflet::clearGroup("weather_stations") |>
-    leaflet::clearControls()
+      df <- dat_filt()
 
-  # ---- Basins (polygons) ----
-  watershed_levels <- c("Cedar Creek", "Menomonee River", "Kinnickinnic River", "Lower Milwaukee River")
-  pal2 <- leaflet::colorFactor(palette = "viridis", domain = watershed_levels)
-
-  bas <- mke_basin_sf_filt()
-  if (inherits(bas, "sf") && nrow(bas) > 0) {
-    proxy |>
-      leaflet::addPolygons(
-        data = bas,
-        group = "basins",
-        options = leaflet::pathOptions(zIndex = 200),
-        color = "gray50",
-        opacity = 0.8,
-        fillOpacity = 0.22,
-        weight = 1,
-        fillColor = ~pal2(HUC10_NAME)
+      proxy <- leaflet::leafletProxy(
+        "map",
+        session = session
       )
-  }
 
-  # ---- Rivers ----
-  riv <- mke_rivers_sf_filt()
-  if (inherits(riv, "sf") && nrow(riv) > 0) {
-    proxy |>
-      leaflet::addPolylines(
-        data = riv,
-        color = "blue",
-        weight = 2,
-        group = "rivers",
-        options = leaflet::pathOptions(zIndex = 400)
-      )
-  }
+      # Only clear sites and dynamic controls
+      # Watersheds, rivers, and rain gauges remain untouched
+      proxy |>
+        leaflet::clearGroup("sites") |>
+        leaflet::clearControls()
 
-  # Weather Stations 
-# Weather Stations
-# Weather Stations
-ws <- ws_lookup_sf_filt()
-ws_icon <- leaflet::makeIcon(
-  iconUrl = "www/raindrop.png",
-  iconWidth = 14,
-  iconHeight = 20,
-  iconAnchorX = 0,
-  iconAnchorY = 0
-)
-  
-if (inherits(ws, "sf") && nrow(ws) > 0) {
- proxy |>
-  leaflet::addMarkers(
-    data = ws,
-    icon = ws_icon,
-    group = "Rain Gauges",
-    popup = ~render_template(
-      "ws_popup",
-      WeatherStation = WeatherStation,
-      Description = Description
-    ), 
-    options = leaflet::pathOptions(zIndex = 600)
-  )
-}
+      # ---- No data ----
+      if (is.null(df) || nrow(df) == 0) {
+        proxy |>
+          leaflet::addControl(
+            html = paste0(
+              "<b style='color:red;font-size:1.2rem;'>",
+              "No data available for this selection ",
+              "— please change filters.</b>"
+            ),
+            position = "topright"
+          )
 
-  # ---- Sites (points) ----
-  df <- dat_filt()
+        return()
+      }
 
-  # If no records, show message and stop (map is already cleared)
-  if (is.null(df) || nrow(df) == 0) {
-    proxy |>
-      leaflet::addControl(
-        html = "<b style='color:red;font-size:1.2rem;'>No data available for this selection — please change filters.</b>",
-        position = "topright"
-      )
-    return()
-  }
+      # ---- Site markers ----
+      proxy |>
+        leaflet::addCircleMarkers(
+          data = df,
+          lng = ~Longitude,
+          lat = ~Latitude,
+          color = "black",
+          weight = 1,
+          fillColor = ~Color,
+          radius = 7,
+          fillOpacity = 1,
+          group = "sites",
+          options = leaflet::pathOptions(zIndex = 800),
+          popup = ~render_template(
+            "leaflet_popup",
+            Result = Result,
+            Site = Site,
+            WaterBody = WaterBody,
+            SiteDescription = SiteDescription,
+            Time = Time,
+            Precip72Hr = Precip72Hr,
+            HoursDry = HoursDry,
+            Color = Color,
+            WeatherStation = WeatherStation
+          )
+        )
 
-  proxy |>
-    leaflet::addCircleMarkers(
-      data = df,
-      lng = ~Longitude, 
-      lat = ~Latitude,
-      color = "black", 
-      weight = 1,
-      fillColor = ~Color,
-      radius = 7,
-      fillOpacity = 1,
-      group = "sites",
-      options = leaflet::pathOptions(zIndex = 800),
-      popup = ~render_template(
-        "leaflet_popup",
-        Result = Result,
-        Site = Site,
-        WaterBody = WaterBody,
-        SiteDescription = SiteDescription,
-        Time = Time,
-        Precip72Hr = Precip72Hr,
-        HoursDry = HoursDry,
-        Color = Color,
-        WeatherStation = WeatherStation
-      )
-    )
-
-  # Legends (only when df has rows)
-  proxy |>
-    leaflet::addControl(
-      html = htmltools::HTML(
-        build_leaflet_legend(watersheds = 1)
-      ),
-      position = "bottomleft"
-  )
-})
-})
+      # ---- Legend ----
+      proxy |>
+        leaflet::addControl(
+          html = htmltools::HTML(
+            build_leaflet_legend(watersheds = 1)
+          ),
+          position = "bottomleft"
+        )
+    })
   })
 }
+
 ## To be copied in the UI
 # mod_leaflet_map_ui("leaflet_map_1")
-    
+
 ## To be copied in the server
 # mod_leaflet_map_server("leaflet_map_1")
+
+

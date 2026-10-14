@@ -441,3 +441,19 @@ get_www_path <- function(file_name) {
 
   stop(glue::glue("WWW file '{file_name}' not found."))
 }
+
+get_last_updated <- function() {
+  path <- "data/last_updated.txt"
+
+  if (!file.exists(path)) {
+    return("Update date unavailable")
+  }
+
+  timestamp <- trimws(readLines(path, warn = FALSE, n = 1))
+
+  if (!nzchar(timestamp)) {
+    return("Update date unavailable")
+  }
+
+  timestamp
+}

@@ -47,11 +47,21 @@ mod_map_barplot_d3_server <- function(id, dat) {
       } else {
         "No records available for this selection"
       }
-      min_precip <- min(df$Precip72Hr)
-      max_precip <- max(df$Precip72Hr)
+       # Calculate precipitation range
+    min_precip <- round(min(df$Precip72Hr, na.rm = TRUE), 2)
+    max_precip <- round(max(df$Precip72Hr, na.rm = TRUE), 2)
+    # Generate precipitation title
+    if (!is.finite(min_precip) || !is.finite(max_precip)) {
+      precip_title <- "No Precipitation Data"
+    } else if (min_precip == 0 && max_precip == 0) {
+      precip_title <- "No Precipitation"
+    } else if (min_precip == max_precip) {
+      precip_title <- glue::glue("{min_precip} Inches")
+    } else {
       precip_title <- glue::glue(
         "{min_precip} - {max_precip} Inches"
       )
+    }
       shiny::HTML(glue::glue(
         render_template("ts_info_icon",
         title = title,
@@ -80,11 +90,23 @@ mod_map_barplot_d3_server <- function(id, dat) {
       } else {
         "No records available for this selection"
       }
-      min_precip <- min(df$Precip72Hr)
-      max_precip <- max(df$Precip72Hr)
+      # Calculate precipitation range
+    min_precip <- round(min(df$Precip72Hr, na.rm = TRUE), 2)
+    max_precip <- round(max(df$Precip72Hr, na.rm = TRUE), 2)
+    # Generate precipitation title
+    if (!is.finite(min_precip) || !is.finite(max_precip)) {
+      precip_title <- "No Precipitation Data"
+    } else if (min_precip == 0 && max_precip == 0) {
+      precip_title <- "No Precipitation"
+    } else if (min_precip == max_precip) {
+      precip_title <- glue::glue("{min_precip} Inches")
+    } else {
       precip_title <- glue::glue(
         "{min_precip} - {max_precip} Inches"
       )
+    }
+        
+        
     info_html <- readr::read_file(
       get_template_path("precip_info_box.html")
     )
@@ -121,7 +143,7 @@ mod_map_barplot_d3_server <- function(id, dat) {
         ),
         d3_version = "5"
       )
-    })
+      })
   })
 }
 

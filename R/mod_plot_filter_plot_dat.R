@@ -57,6 +57,12 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
           dplyr::mutate(
             Date = as.Date(paste(years, Date, 15, sep = "-")),
             type = "Historic Monthly Average",
+            ReadingNum = 
+              dplyr::if_else(grepl(
+                "Oxygen", LabelName),
+                round(ReadingNum, 1),
+                round(ReadingNum,0)
+              ),
             SiteCode = site,
             Depth = depth,
             Year = NA
@@ -71,7 +77,7 @@ mod_plot_filter_plot_dat_server <- function(id, plot_inputs) {
             station_id %in% station_val) |>
           dplyr::collect() |> 
           dplyr::mutate(
-            LabelName = paste("Total Daily Precipitation:"),
+            LabelName = paste("Total Daily Precipitation"),
             type = paste("Total Daily Precipitaion"),
             Units = "Inches",
             SiteCode = site

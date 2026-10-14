@@ -92,23 +92,29 @@ output$text <- renderUI({
           domain  = df$Result
         )
 
- output$table_title <- shiny::renderUI({
+
+output$table_title <- shiny::renderUI({
   df <- dat_filt()
 
   req(nrow(df) > 0)
 
-  parameter <- unique(df$LabelName)
-  units <- unique(df$Units)
+  parameter <- unique(df$LabelName)[1]
+  units <- unique(df$Units)[1]
 
-  parameter <- parameter[1]
-  units <- units[1]
+  # Italicize E. coli wherever it appears in the parameter name
+  parameter <- gsub(
+    "E\\. coli",
+    "<i>E. coli</i>",
+    parameter,
+    ignore.case = TRUE
+  )
 
   shiny::HTML(glue::glue(
     "Results: {parameter} ({units})"
   ))
 })
 
-
+        
 output$map_dt <- DT::renderDataTable({
   rng <- range(df$Result, na.rm = TRUE)
 

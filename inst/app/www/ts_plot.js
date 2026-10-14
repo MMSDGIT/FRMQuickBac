@@ -312,7 +312,7 @@ facetG.each(function (facet) {
     yMin -= pad;
     yMax += pad;
   }
-
+  
   // Dynamic left padding
   const maxAbs = Math.max(Math.abs(yMin), Math.abs(yMax));
   const digits = String(Math.round(maxAbs)).replace("-", "").length;

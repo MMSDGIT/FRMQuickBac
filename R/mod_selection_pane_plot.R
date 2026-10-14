@@ -41,7 +41,7 @@ output$text <- renderUI({
                   border-radius:6px;
                   margin-bottom:10px;'>
         <div style='font-size:1em; font-weight:bold; margin-bottom:4px;'>
-          Select Values in the dropdown to get started.
+          Select values in the dropdown to get started.
         </div>
           <div style='font-size:0.75rem;'>
             <b style='color:#d9534f;'>Tip:</b>

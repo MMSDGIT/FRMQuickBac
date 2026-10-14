@@ -242,3 +242,9 @@ table.dataTable tbody td {
 body>div.wrapper>div.content-wrapper>section.content>div.content-wrapper {
   margin-left: 1px;
 }
+
+/* Leaflet popup close button */
+.leaflet-container a.leaflet-popup-close-button {
+  cursor: pointer !important;
+  user-select: none;
+}
