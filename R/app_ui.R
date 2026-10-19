@@ -25,18 +25,26 @@ app_ui <- function(request) {
     fresh::use_theme(bs4DashTheme),
 
     bs4Dash::bs4DashPage(
-      title = "Best Bacteria Report",
+      title = "River Health Report",
       dark = NULL,
       help = NULL,
       fullscreen = TRUE,
 
       # ---- Header ----
       header = bs4Dash::bs4DashNavbar(
-        title = "Best Bacteria Report",
+        title = tags$div(
+      class = "river-report-brand",
+      tags$div(
+        class = "river-report-name",
+        "River Health Report"
+      ),
+      tags$div(
+        class = "river-report-subtitle",
+        "Preliminary Water Quality Results"
+      )
+    ),
         skin = "light",
-
         br(),
-
         tags$a(
           href = "https://www.mmsd.com/",
           target = "_blank",
@@ -84,7 +92,7 @@ app_ui <- function(request) {
 
       # ---- Footer ----
       footer = bs4Dash::bs4DashFooter(
-        left = "Best Bacteria Report © 2026",
+        left = "MMSD River Health Report - Preliminary Water Quality Results",
 
         right = tags$span(
           style = "

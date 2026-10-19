@@ -248,3 +248,109 @@ body>div.wrapper>div.content-wrapper>section.content>div.content-wrapper {
   cursor: pointer !important;
   user-select: none;
 }
+
+
+
+/* ================================================
+   bs4Dash Tab Card - Fix Invisible Hover Text
+   ================================================ */
+
+/* Normal (inactive) tabs */
+.card.bs4Dash.card-tabs .nav-pills .nav-link {
+  color: #ffffff !important;
+}
+
+/* Hovered tabs */
+.card.bs4Dash.card-tabs .nav-pills .nav-link:hover {
+  color: #ffffff !important;
+  background-color: #0056b3 !important;
+}
+
+/* Active tab */
+.card.bs4Dash.card-tabs .nav-pills .nav-link.active,
+.card.bs4Dash.card-tabs .nav-pills .nav-link.active:hover {
+  color: #0056b3 !important;
+  background-color: #ffffff !important;
+}
+
+
+/* ==========================================
+   River Health Report - Sidebar Branding
+   ========================================== */
+
+.river-report-brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  padding: 10px 8px;
+  line-height: 1.25;
+}
+
+.river-report-name {
+  color: #ffffff !important;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  line-height: 1.2;
+}
+
+.river-report-subtitle {
+  color: #b8d5ea !important;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+
+/* Tighten sidebar branding height */
+.main-sidebar .brand-link {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 10px 8px !important;
+  white-space: normal !important;
+  display: flex;
+  align-items: center;
+}
+
+/* Remove excess spacing below branding */
+.main-sidebar .sidebar {
+  padding-top: 0 !important;
+}
+
+
+/* Center the report title in the sidebar */
+.river-report-brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  padding: 8px 4px !important;
+  line-height: 1.25;
+}
+
+/* Keep the sidebar branding compact */
+.main-sidebar .brand-link {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 6px 8px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: normal !important;
+}
+
+/* Ensure the title fills the available width */
+.main-sidebar .brand-text {
+  width: 100%;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+/* Move the report title slightly lower */
+.river-report-brand {
+  transform: translateY(20px);
+}

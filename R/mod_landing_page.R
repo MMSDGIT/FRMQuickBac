@@ -74,6 +74,7 @@ mod_landing_page_ui <- function(id) {
             )
           )
         ),
+        
 
         # ---- Rain Gauges ----
         bs4Dash::bs4Card(
@@ -97,9 +98,23 @@ mod_landing_page_ui <- function(id) {
 
             " distributed throughout its service area to monitor precipitation. For reporting purposes, each water quality monitoring site is paired with the geographically closest weather station. Precipitation values shown in this report reflect data from that nearest station with available data at the time the sample was collected. The 48-hour precipitation metric represents the total inches of rainfall recorded during the 48 hours preceding the sampling time at the closest rain gauge."
           )
+        ),
+        # ---- Rain Gauges ----
+        bs4Dash::bs4Card(
+          title = "Disclaimer",
+          width = 12,
+          status = "primary",
+          solidHeader = TRUE,
+          tags$div(
+            style = "font-size:1.25rem;",
+
+            "MMSD strives to ensure that all technical data and other information made available to the public are accurate,", 
+            "complete, and in conformance with the Wisconsin Public Records Law.  We cannot guarantee the accuracy or completeness of the information",  
+            "provided from this database search and information obtained should be used with caution.  Persons using information for purpose for which", 
+            "accuracy and completeness are required are advised that the data contained herein may be subject to change."
+          )
         )
       ),
-
 # ---- Right Column: Tabbed Images ----
 shiny::column(
   width = 6,
@@ -112,12 +127,11 @@ shiny::column(
 
     shiny::tabPanel(
       title = "Research Vessel Pelagos",
-
       tags$img(
         src = "www/pelagos.jpg",
         alt = "Reasearch Pelagos",
         style = "
-          width: 100%;
+          width: 100%;l
           height: auto;
           display: block;
         "
