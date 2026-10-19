@@ -13,7 +13,7 @@
 mod_leaflet_map_ui <- function(id) {
   ns <- shiny::NS(id)
   bs4Dash::bs4Card(
-    title = "Map of Survey Results",
+    title = "Map",
     status = "primary",
     solidHeader = TRUE,
     width = 12,

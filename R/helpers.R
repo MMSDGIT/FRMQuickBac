@@ -457,3 +457,15 @@ get_last_updated <- function() {
 
   timestamp
 }
+
+
+get_most_recent_survey_date <- function() {
+        dat <- load_survey_data()
+        dat |> 
+          dplyr::collect() |>
+          dplyr::distinct(Date) |>
+          dplyr::pull(Date) |>
+          max(na.rm = TRUE) |>
+          format("%B %d, %Y")
+}
+

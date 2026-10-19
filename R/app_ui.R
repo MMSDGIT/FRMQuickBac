@@ -92,7 +92,9 @@ app_ui <- function(request) {
             color: #555;
             white-space: nowrap;
           ",
-          tags$b("Data Updated: "),
+          tags$b("Most Recent Survey Date: "),
+          get_most_recent_survey_date(),
+          tags$b( " | Data Updated at: "),
           get_last_updated()
         )
       )
