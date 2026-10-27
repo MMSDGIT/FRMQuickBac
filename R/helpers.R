@@ -387,6 +387,7 @@ build_leaflet_legend <- function(watersheds) {
       border: 1px solid #4b7591ff;
       border-radius: 12px;
       padding: 10px 12px;
+      margin-bottom: 25px;
       font-family: Poppins, Arial, sans-serif;
       font-size: 0.7rem;
       color: #0A2B43;
@@ -423,9 +424,9 @@ wrangle_download_data <- function(yrs){
             WaterBody,
             Date,
             "Dissolved Oxygen (mg/L)" = "Dissolved Oxygen",
-            "E. coli (CFU/100mL)" = "E. coli",
+            "E. coli (MPN/100mL)" = "E. coli",
             "Fecal Coliform (CFU/100mL)" = "Fecal Coliform",
-            Precip72Hr)
+            "48 Hour Precipitation (Inches)" = Precip72Hr)
 }
 
 get_www_path <- function(file_name) {
